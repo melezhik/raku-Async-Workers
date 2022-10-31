@@ -59,7 +59,7 @@ tasks:
           rakubrew switch moar-$version
           cd source/
           zef install --/test Pretty::Table
-          zef install --/test .
+          zef install . --deps-only --test-depends --/test
           /usr/bin/time -o "${cache_root_dir}/${version}_time" \
           zef test . && touch "${cache_root_dir}/${version}_ok"
     depends:
