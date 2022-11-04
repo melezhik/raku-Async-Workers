@@ -1,4 +1,6 @@
-image: melezhik/sparrow:debian
+image:
+  - melezhik/sparrow:alpine
+  - melezhik/sparrow:debian
 tasks:
   -
     name: main
