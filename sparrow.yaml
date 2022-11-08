@@ -59,9 +59,10 @@ tasks:
         code: |
           set -e
 
+          eval "$(~/.rakubrew/bin/rakubrew init Bash)"
           rakubrew download moar-$version
           rakubrew switch moar-$version
-          eval "$(~/.rakubrew/bin/rakubrew init Bash)"
+
           which raku
           raku --version
           
