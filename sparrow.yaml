@@ -83,7 +83,7 @@ tasks:
       if test $os = "debian"; then
         sudo apt-get install -y time
       elif test $os = "arch"; then
-         sudo pacman -S --needed --noconfirm 
+         sudo pacman -S --needed --noconfirm time
       fi
       curl -s https://rakubrew.org/install-on-perl.sh | sh
       zef install --/test Text::Table::Simple
