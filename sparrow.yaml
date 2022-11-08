@@ -1,5 +1,5 @@
 image:
-  - melezhik/sparrow:alpine
+  - melezhik/sparrow:archlinux
   - melezhik/sparrow:debian
 tasks:
   -
@@ -7,17 +7,17 @@ tasks:
     default: true
     language: Raku
     code: |
-      use Pretty::Table;
-      my $table = Pretty::Table.new:
-        title => "Rakudo Versions",
-        field-names => ["Version", "Status", "Time"],
-        sort-by => 'Version',
-        align => %('Version' => 'l');
-        
+      use Text::Table::Simple;
+      my @columns = ("Rakudo Version", "Status", "Time", "Linux Dist");
+      my @rows;
+      my $fail = False;
       for config()<tasks><multi-versions><state><list><> -> $i {
-        $table.add-row: [ $i<version>, $i<status>,  $i<time> ];
+        @rows.push: [ $i<version>, $i<status>,  $i<time>, os() ];
+        $fail = True unless $i<status> eq "OK";
       }
-      say $table;
+      my @table = lol2table(@columns,@rows);
+      .say for @table;
+      die "some tests failed" if $fail == True;
     depends:
       -
         name: multi-versions
@@ -29,7 +29,6 @@ tasks:
         - 2022.04
         - 2022.06
         - 2022.07
-        - blead
     code: |
       my @state;
       for config()<list><> -> $v {
@@ -59,11 +58,17 @@ tasks:
           ignore_error
         code: |
           set -e
+
           rakubrew download moar-$version
           rakubrew switch moar-$version
+          eval "$(~/.rakubrew/bin/rakubrew init Bash)"
+          which raku
+          raku --version
+          
           cd source/
-          zef install --/test Pretty::Table
+          
           zef install . --deps-only --test-depends --/test
+          
           /usr/bin/time -o "${cache_root_dir}/${version}_time" \
           zef test . && touch "${cache_root_dir}/${version}_ok"
     depends:
@@ -76,8 +81,8 @@ tasks:
       set -e
       if test $os = "debian"; then
         sudo apt-get install -y time
+      elif test $os = "arch"; then
+         sudo pacman -S --needed --noconfirm 
       fi
-      curl -sf https://rakubrew.org/perl/rakubrew -o rakubrew
-      sudo mv rakubrew /usr/local/bin
-      sudo chmod a+x /usr/local/bin/rakubrew
-      rakubrew mode shim
+      curl -s https://rakubrew.org/install-on-perl.sh | sh
+      zef install --/test Text::Table::Simple
