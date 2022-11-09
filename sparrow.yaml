@@ -67,7 +67,7 @@ tasks:
           raku --version
           
           cd source/
-          
+          zef update 
           zef install --/test JSON::Fast
           zef info JSON::Fast
           zef install . --deps-only --test-depends --/test
