@@ -70,7 +70,7 @@ tasks:
           zef --version
           
           cd source/
-          rf -rf ~/.zef/
+          rm -rf ~/.zef/
           zef update 
           #zef install --/test JSON::Fast
           zef install . --deps-only --test-depends --/test
