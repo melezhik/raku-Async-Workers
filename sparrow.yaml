@@ -1,8 +1,5 @@
 image:
-  - melezhik/sparrow:archlinux
   - melezhik/sparrow:debian
-  - melezhik/sparrow:ubuntu
-  - melezhik/sparrow:alpine
 tasks:
   -
     name: main
@@ -28,7 +25,7 @@ tasks:
     language: Raku
     config:
       list:
-        - 2022.04
+        # - 2022.04
         - 2022.06
         - 2022.07
     code: |
@@ -61,6 +58,8 @@ tasks:
         code: |
           set -e
 
+          echo "Linux version: $os"
+
           curl -sL https://rakudo.org/dl/rakudo/rakudo-moar-$version-01-linux-x86_64-gcc.tar.gz \
           -o rakudo-moar-$version-01-linux-x86_64-gcc.tar.gz
           tar -xzf rakudo-moar-$version-01-linux-x86_64-gcc.tar.gz          
@@ -68,28 +67,22 @@ tasks:
 
           which raku
           which zef
+
           raku --version
           zef --version
           
           cd source/
-
-          zef install --/test JSON::Fast --force-install 
-
-          zef install . --deps-only --test-depends --/test
-          
-          /usr/bin/time -o "${cache_root_dir}/${version}_time" \
+          zef install . --deps-only --test-depends --build-depends --/test -to=home         
+          /usr/bin/time -f "%E real,%U user,%S sys | CPU Percentage: %P" -o "${cache_root_dir}/${version}_time" \
           zef test . && touch "${cache_root_dir}/${version}_ok"
+          
     depends:
       -
-        name: deps-install
+        name: install-deps
   -
-    name: deps-install
+    name: install-deps
     language: Bash
     code: |
-      set -e
-      if test $os = "debian"; then
-        sudo apt-get install -y time
-      elif test $os = "arch"; then
-         sudo pacman -S --needed --noconfirm time
-      fi
+      sudo apt-get install -y time 
       zef install --/test Text::Table::Simple
+ 
