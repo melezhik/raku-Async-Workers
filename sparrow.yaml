@@ -26,8 +26,8 @@ tasks:
     config:
       list:
         # - 2022.04
-        - 2022.06
         - 2022.07
+        - 2022.12
     code: |
       my @state;
       for config()<list><> -> $v {
@@ -57,17 +57,13 @@ tasks:
           ignore_error
         code: |
           set -e
-
           echo "Linux version: $os"
-
           curl -sL https://rakudo.org/dl/rakudo/rakudo-moar-$version-01-linux-x86_64-gcc.tar.gz \
           -o rakudo-moar-$version-01-linux-x86_64-gcc.tar.gz
           tar -xzf rakudo-moar-$version-01-linux-x86_64-gcc.tar.gz          
           eval "$(rakudo-moar-$version-01-linux-x86_64-gcc/scripts/set-env.sh)"
-
           which raku
           which zef
-
           raku --version
           zef --version
           
@@ -85,4 +81,3 @@ tasks:
     code: |
       sudo apt-get install -y time 
       zef install --/test Text::Table::Simple
- 
