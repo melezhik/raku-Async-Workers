@@ -57,20 +57,22 @@ tasks:
           ignore_error
         code: |
           set -e
+
           echo "Linux version: $os"
           curl -sL https://rakudo.org/dl/rakudo/rakudo-moar-$version-01-linux-x86_64-gcc.tar.gz \
           -o rakudo-moar-$version-01-linux-x86_64-gcc.tar.gz
           tar -xzf rakudo-moar-$version-01-linux-x86_64-gcc.tar.gz          
-          eval "$(rakudo-moar-$version-01-linux-x86_64-gcc/scripts/set-env.sh)"
+          eval "$(rakudo-moar-$version-01-linux-x86_64-gcc/scripts/set-env.sh quiet)"
           which raku
           which zef
           raku --version
           zef --version
+          zef install Pakku:ver<ava-1>  --/test
           
           cd source/
-          zef install . --deps-only --test-depends --build-depends --/test -to=home         
+          pakku add deps only notest .         
           /usr/bin/time -f "%E real,%U user,%S sys | CPU Percentage: %P" -o "${cache_root_dir}/${version}_time" \
-          zef test . && touch "${cache_root_dir}/${version}_ok"
+          pakku test . && touch "${cache_root_dir}/${version}_ok"
           
     depends:
       -
@@ -80,4 +82,4 @@ tasks:
     language: Bash
     code: |
       sudo apt-get install -y time 
-      zef install --/test Text::Table::Simple
+      zef install --/test Text::Table::Simple 
