@@ -67,7 +67,7 @@ tasks:
           which zef
           raku --version
           zef --version
-          zef install Pakku:ver<ava-1>  --/test
+          zef install "Pakku:ver<ava-1>"  --/test
           
           cd source/
           pakku add deps only notest .         
